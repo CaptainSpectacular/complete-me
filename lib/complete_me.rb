@@ -25,7 +25,7 @@ class CompleteMe
   end
 
 
-  def go_dictionary
+  def import_dictionary
     dictionary.each{ |d| insert(d.downcase)}
   end
 

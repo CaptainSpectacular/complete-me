@@ -1,9 +1,10 @@
 require 'pry'
 class Node
   attr_accessor :data, :parent , :children
-  def initialize(data)
+  def initialize(data, word = false)
     @data = data
     @children = Hash.new
+    @word = word
   end
 
 
@@ -22,7 +23,7 @@ class Node
         current.insert(word.join)
 
       else
-        children[char] = Node.new(char)
+        children[char] = Node.new(char, word == [])
         current = children[char]
         current.insert(word.join)
       end
@@ -32,15 +33,25 @@ class Node
   end
 
 
-  def suggest(word, result = [])
-
+  def word?
+    @word
   end
-  
 
-  def recursive_children(result)
+
+  def suggest(word, result = [])
+    ptr = self
+    word.chars.each do |char|
+      ptr = children.fetch(char)
+    end
+    
+    ptr.find_children
+  end
+
+
+  def find_children(result = [])
     children.each do |child|
-      result << child.data
-      child.recursive_children(result)
+      result << child[1].data
+      child[1].find_children(result)
     end
 
     result
