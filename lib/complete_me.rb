@@ -4,7 +4,7 @@ class CompleteMe
 
   def initialize
     @dictionary = []
-    @root = Node.new("Master")
+    @root = Node.new("Master", nil)
   end
 
   
