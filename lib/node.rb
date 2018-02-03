@@ -39,33 +39,48 @@ class Node
   end
 
 
-  def suggest(word)
+  def find_node(word)
     ptr = self
+
     word.chars.each do |char|
-      ptr = children.fetch(char)
+      ptr = ptr.children[char]
+    end
+
+    ptr ? ptr : "Not found"
+  end
+
+
+
+  def find_children(node, kids = [])
+    node.children.each do |child|
+
+      kids << child[1]
+      child[1].find_children(child[1], kids)
+
+    end
+    kids.select{|x| x.word?}
+  end
+
+
+  def find_parents(node, results = [])
+    results << node.data
+    find_parents(node.parent, results) unless node.parent.data == 'Master'
+    results.reverse.join
+    
+  end
+
+
+  def find_word(substring)
+    start = find_node(substring)
+    kids = find_children(start).compact
+    words = []
+    kids.each do |kid|
+      words << kid.find_parents(kid)
     end
     
-    ptr.find_word(word, ptr)
+    words.uniq
   end
 
-
-  def find_word(word, ptr)
-    children.map do |child|
-      return child[1].find_ancestors if child[1].word?
-      ptr = child[1]
-      child[1].find_word(word, ptr)
-    end
-  end
-
-
-  def find_ancestors(result = [])
-    ptr = self
-    until ptr.data == "Master"
-      result << ptr.data
-      ptr = ptr.parent
-    end
-
-    result.reverse.join
-  end
   
+
 end
